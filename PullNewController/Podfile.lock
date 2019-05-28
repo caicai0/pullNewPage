@@ -1,0 +1,32 @@
+PODS:
+  - FXBlurView (1.6.4)
+  - GPUImage (0.1.7)
+  - Masonry (1.1.0)
+  - MJRefresh (3.2.0)
+  - SGPagingView (1.6.1)
+
+DEPENDENCIES:
+  - FXBlurView
+  - GPUImage
+  - Masonry
+  - MJRefresh
+  - SGPagingView (~> 1.6.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - FXBlurView
+    - GPUImage
+    - Masonry
+    - MJRefresh
+    - SGPagingView
+
+SPEC CHECKSUMS:
+  FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MJRefresh: ed450d6eb9d3346a2cb033ab7eb6de090aeef437
+  SGPagingView: 11753f76f2fa9f306d152f33e833f735c0751def
+
+PODFILE CHECKSUM: f03a3f3bf3c2509fb15effdd608f65962946887d
+
+COCOAPODS: 1.6.1
