@@ -37,6 +37,8 @@ typedef NS_ENUM(NSUInteger, PullContainerViewControllerStatus) {
 
 @property (nonatomic, strong, readonly) UIViewController *topVC;
 @property (nonatomic, strong, readonly) UIViewController *mainVC;
+@property (nonatomic, assign) UIEdgeInsets topEdgeInsets;//顶部页面的边距信息
+@property (nonatomic, assign) UIEdgeInsets mainEdegeInsets;//主页面的边距信息
 
 - (instancetype)initWithTopView:(UIViewController *)topVC
                     andMainView:(UIViewController *)mainVC;

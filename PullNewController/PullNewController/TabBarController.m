@@ -23,14 +23,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UIViewController * top = [[ListViewController alloc]initWithNibName:nil bundle:nil];
+    CGFloat statusHeight = CGRectGetHeight([UIApplication sharedApplication].statusBarFrame);
+    CGFloat titleBarHeight = 44;
+    
+    UIViewController * top = [[SecondViewController alloc]initWithNibName:nil bundle:nil];
     UIViewController * main = [[FirstViewController alloc]initWithNibName:nil bundle:nil];
     PullContainerViewController * pullController = [[MainPullViewController alloc]initWithTopView:top andMainView:main];
     [pullController.delegates addPointer:(void * _Nullable)(self)];
-    
-    CGFloat statusHeight = CGRectGetHeight([UIApplication sharedApplication].statusBarFrame);
-    pullController.middle = ([UIScreen mainScreen].bounds.size.height-statusHeight-44)/3;
-    pullController.max = ([UIScreen mainScreen].bounds.size.height-statusHeight-44);
+    pullController.mainEdegeInsets = UIEdgeInsetsMake(statusHeight, 0, 0, 0);
+    pullController.topEdgeInsets = UIEdgeInsetsMake(0, 0, titleBarHeight, 0);
+    pullController.middle = ([UIScreen mainScreen].bounds.size.height-titleBarHeight-pullController.mainEdegeInsets.top)/3;
+    pullController.max = ([UIScreen mainScreen].bounds.size.height-titleBarHeight-pullController.mainEdegeInsets.top);
     pullController.tabBarItem = [[UITabBarItem alloc]initWithTitle:@"pull" image:nil tag:0];
     NSMutableArray * arr = [NSMutableArray arrayWithArray:self.viewControllers];
     [arr addObject:pullController];

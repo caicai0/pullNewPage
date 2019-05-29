@@ -37,6 +37,8 @@
     if(self = [super init]){
         self.delegates = [NSPointerArray weakObjectsPointerArray];
         self.handlPan = YES;
+        self.mainEdegeInsets = UIEdgeInsetsZero;
+        self.topEdgeInsets = UIEdgeInsetsZero;
         self.scrollView = [[UIScrollView alloc]init];
         self.topVC = topVC;
         self.mainVC = mainVC;
@@ -49,6 +51,19 @@
 #pragma mark - life
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (![self.childViewControllers containsObject:self.mainVC]) {
+        [self addChildViewController:self.mainVC];
+        [self.view addSubview:self.mainVC.view];
+        [self addAutolayoutToView:self.mainVC.view superView:self.view edgeInsets:self.mainEdegeInsets];
+        self.mainVC.view.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.mainVC.view.layer.shadowOpacity = 0.2;
+        self.mainVC.view.layer.shadowRadius = 10;
+        //滑动手势
+        self.pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(handlePan:)];
+        [self.mainVC.view addGestureRecognizer:self.pan];
+        [self.pan setCancelsTouchesInView:YES];
+        self.pan.delegate = self;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -58,19 +73,6 @@
     }
     if (!self.max) {
         self.max = self.view.bounds.size.height;
-    }
-    if (![self.childViewControllers containsObject:self.mainVC]) {
-        [self addChildViewController:self.mainVC];
-        [self.view addSubview:self.mainVC.view];
-        self.mainVC.view.frame = self.view.bounds;
-        self.mainVC.view.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.mainVC.view.layer.shadowOpacity = 0.2;
-        self.mainVC.view.layer.shadowRadius = 10;
-        //滑动手势
-        self.pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(handlePan:)];
-        [self.mainVC.view addGestureRecognizer:self.pan];
-        [self.pan setCancelsTouchesInView:YES];
-        self.pan.delegate = self;
     }
 }
 
@@ -112,6 +114,15 @@
 }
 
 #pragma mark - private
+
+- (void)addAutolayoutToView:(UIView *)view superView:(UIView *)superView edgeInsets:(UIEdgeInsets)edgeInsets{
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint * left = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:edgeInsets.left];
+    NSLayoutConstraint * right = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:superView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-edgeInsets.right];
+    NSLayoutConstraint * top = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:superView attribute:NSLayoutAttributeTop multiplier:1.0 constant:edgeInsets.top];
+    NSLayoutConstraint * bottom = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:superView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-edgeInsets.bottom];
+    [superView addConstraints:@[left,right,top,bottom]];
+}
 
 //滑动手势
 static CGFloat start = 0;
@@ -209,12 +220,14 @@ static CGFloat start = 0;
 
 - (void)updateDelegate:(CGFloat)progress{
     if (self.max != 0 && progress<(self.middle/self.max/2)) {
-        self.blurView.hidden = NO;
         CGFloat p = progress/(self.middle/self.max/2);
         CGFloat blurRadius = (5*(1-p));
+        self.blurView.hidden = NO;
         self.blurView.blurRadius = blurRadius;
+        self.blurView.dynamic = YES;
     }else{
         self.blurView.hidden = YES;
+        self.blurView.dynamic = NO;
     }
     [self.delegates compact];
     NSArray * arr = self.delegates.allObjects;
@@ -231,15 +244,8 @@ static CGFloat start = 0;
 - (void)addTopView{
     [self addChildViewController:self.topVC];
     [self.topVC beginAppearanceTransition:YES animated:NO];
-    FXBlurView * blurView  = [[FXBlurView alloc]init];
-    blurView.dynamic = YES;
-    blurView.tintColor = [UIColor clearColor];
-    blurView.blurRadius = 5;
-    [self.view insertSubview:blurView atIndex:0];
     [self.view insertSubview:self.topVC.view atIndex:0];
-    blurView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.middle/2);
-    self.topVC.view.frame = self.view.bounds;
-    self.blurView = blurView;
+    [self addAutolayoutToView:self.topVC.view superView:self.view edgeInsets:self.topEdgeInsets];
 }
 
 @end

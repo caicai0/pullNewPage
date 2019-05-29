@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SGPagingView.h"
+#import "PullContainerViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FirstViewController : UIViewController
+@interface FirstViewController : UIViewController <SGPageTitleViewDelegate, SGPageContentScrollViewDelegate,PullContainerViewControllerDelegate>
+
+@property (nonatomic, strong) SGPageTitleView *pageTitleView;
 
 @end
 

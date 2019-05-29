@@ -14,8 +14,7 @@
 #import "PullContainerViewController.h"
 #import "Masonry.h"
 
-@interface FirstViewController () <SGPageTitleViewDelegate, SGPageContentScrollViewDelegate,PullContainerViewControllerDelegate>
-@property (nonatomic, strong) SGPageTitleView *pageTitleView;
+@interface FirstViewController ()
 @property (nonatomic, strong) SGPageContentScrollView *pageContentScrollView;
 @property (nonatomic, strong) UIView * headerView;
 
@@ -65,34 +64,9 @@
         make.left.mas_equalTo(self.view);
         make.right.mas_equalTo(self.view);
         make.top.mas_equalTo(self.view).mas_offset(0);
-        make.height.mas_equalTo(@(44+statusHeight));
+        make.height.mas_equalTo(@(44));
     }];
     [button addTarget:self action:@selector(backToMain) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIView * headerView = [[UIView alloc]init];
-    headerView.backgroundColor = [UIColor redColor];
-    [self.view addSubview:headerView];
-    [headerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view);
-        make.top.equalTo(self.view);
-        make.right.equalTo(self.view);
-        make.height.equalTo(@(pageTitleViewY));
-    }];
-    self.headerView = headerView;
-
-    NSArray *titleArr = @[@"精选", @"电影", @"电视剧", @"综艺", @"NBA", @"娱乐", @"动漫", @"演唱会", @"VIP会员"];
-    SGPageTitleViewConfigure *configure = [SGPageTitleViewConfigure pageTitleViewConfigure];
-    self.pageTitleView = [SGPageTitleView pageTitleViewWithFrame:CGRectMake(0, pageTitleViewY, self.view.frame.size.width, 44) delegate:self titleNames:titleArr configure:configure];
-    [headerView addSubview:_pageTitleView];
-    [_pageTitleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(headerView);
-        make.right.mas_equalTo(headerView);
-        make.bottom.mas_equalTo(headerView);
-        make.height.mas_equalTo(pageTitleViewY-statusHeight);
-    }];
-    
-    [_pageTitleView addBadgeForIndex:1];
-    [_pageTitleView addBadgeForIndex:5];
     
     ListViewController *oneVC = [[ListViewController alloc] init];
     ListViewController *twoVC = [[ListViewController alloc] init];
@@ -105,14 +79,13 @@
     UIViewController *nineVC = [[UIViewController alloc] init];
     NSArray *childArr = @[oneVC, twoVC, threeVC, fourVC, fiveVC, sixVC, sevenVC, eightVC, nineVC];
     /// pageContentScrollView
-    CGFloat ContentCollectionViewHeight = self.view.frame.size.height - CGRectGetMaxY(_pageTitleView.frame);
     self.pageContentScrollView = [[SGPageContentScrollView alloc] initWithFrame:CGRectZero parentVC:self childVCs:childArr];
     _pageContentScrollView.delegatePageContentScrollView = self;
     [self.view addSubview:_pageContentScrollView];
     [self.pageContentScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.view);
         make.right.mas_equalTo(self.view);
-        make.top.mas_equalTo(self.pageTitleView.mas_bottom);
+        make.top.mas_equalTo(button.mas_bottom);
         make.bottom.mas_equalTo(self.view);
     }];
 }
@@ -137,19 +110,6 @@
     PullContainerViewController * pullController = (PullContainerViewController *)[self parentControllerKindOfClass:[PullContainerViewController class]];
     pullController.panOffset = 0;
     pullController.handlPan = YES;
-}
-
-#pragma mark - PullContainerViewControllerDelegate
-
-- (void)pullContainerViewController:(PullContainerViewController *)controller progress:(CGFloat)progress{
-    PullContainerViewController * pullcontroller = (PullContainerViewController *) [self parentControllerKindOfClass:[PullContainerViewController class]];
-    self.headerView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, -progress*pullcontroller.max);
-    if (progress<0.1) {
-        self.headerView.hidden = NO;
-        self.headerView.alpha = 1-(progress/0.1);
-    }else{
-        self.headerView.hidden = YES;
-    }
 }
 
 @end
